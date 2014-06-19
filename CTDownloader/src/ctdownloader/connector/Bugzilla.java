@@ -1,5 +1,6 @@
 package ctdownloader.connector;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,9 @@ public class Bugzilla {
 				.getValue();
 		int id = Integer.valueOf(attribute.getTaskData().getTaskId());
 		
-		String contextFileNmae = getContext(attribute);
+		String contextFileName = getContext(attribute);
+		File f = new File(contextFileName);
+		boolean hasContext = f.exists();
 		
 		String changed = attribute.getMappedAttribute(TaskAttribute.DATE_MODIFICATION)
 				.getValue();
@@ -101,7 +104,7 @@ public class Bugzilla {
 				.getValue();
 
 		ChangeTaskModel taskModel = new ChangeTaskModel(summary, desc,
-				getComments(attribute), id, contextFileNmae, product, severity, priority);
+				getComments(attribute), id, contextFileName, product, severity, priority, hasContext);
 		taskModel.setChanged(changed);
 		
 		return taskModel;

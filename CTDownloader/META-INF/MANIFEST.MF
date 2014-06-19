@@ -15,3 +15,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/commons-lang3-3.3.2.jar
+Export-Package: ctdownloader.connector,
+ ctdownloader.model

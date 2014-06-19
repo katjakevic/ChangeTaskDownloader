@@ -23,6 +23,7 @@ public class TaskContextDownloader {
 
 		String fileName = "MylynContexts/"+attribute.getTaskData().getTaskId() +".zip";
 		Map<String, TaskAttribute> attrs = attribute.getAttributes();
+		
 		for (Map.Entry<String, TaskAttribute> entry : attrs.entrySet()) {
 			if (entry.getKey().contains("task.common.attachment")) {
 				TaskAttribute attachmentAttr = entry.getValue();
@@ -30,7 +31,7 @@ public class TaskContextDownloader {
 				TaskAttribute descAttr = attachmentAttr.getAttribute("desc");
 				String attchFileName = descAttr.getValue();
 				if (attchFileName.equals("mylyn/context/zip")) {
-
+					
 					TaskAttribute urlAttr = attachmentAttr
 							.getAttribute("task.common.attachment.url");
 					try {

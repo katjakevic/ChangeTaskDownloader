@@ -18,11 +18,11 @@ import org.eclipse.mylyn.internal.context.core.LocalContextStore;
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
 import org.eclipse.mylyn.monitor.core.InteractionEvent.Kind;
 
-
+import ctdownloader.model.InteractionEventModel.EventKind;
 
 @SuppressWarnings("restriction")
 public class ChangeTaskModel {
-	
+
 	private String summary;
 	private String description;
 	private ArrayList<CommentModel> comments = new ArrayList<CommentModel>();
@@ -34,11 +34,12 @@ public class ChangeTaskModel {
 	private String priority;
 
 	private String changed;
+	private boolean hasContext;
 
 	public ChangeTaskModel(String taskSummary, String taskDesc,
 			ArrayList<CommentModel> taskComments, int taskId,
 			String contextFileName, String product, String severity,
-			String priority) {
+			String priority, boolean hasContext) {
 		this.summary = taskSummary;
 		this.description = taskDesc;
 		this.comments.addAll(taskComments);
@@ -47,7 +48,12 @@ public class ChangeTaskModel {
 		this.priority = priority;
 		this.product = product;
 		this.severity = severity;
+		this.hasContext = hasContext;
 
+	}
+
+	public boolean hasContext() {
+		return hasContext;
 	}
 
 	public String getProduct() {
@@ -82,7 +88,6 @@ public class ChangeTaskModel {
 		this.changed = changed;
 	}
 
-
 	public String getContextFileName() {
 		return contextFileName;
 	}
@@ -96,7 +101,57 @@ public class ChangeTaskModel {
 		return file.exists();
 	}
 
-	@SuppressWarnings("restriction")
+	public TaskContextModel getTaskContextModel() throws NoTaskContextAvailableException {
+		if (hasContext == true) {
+			File file = new File("MylynContexts/" + id + ".zip");
+			LocalContextStore store = new LocalContextStore(
+					new InteractionContextScaling());
+			IInteractionContext interactionContext = store.loadContext(
+					String.valueOf(id), file, new InteractionContextScaling());
+
+			List<InteractionEvent> events = interactionContext
+					.getInteractionHistory();
+			
+			ArrayList<InteractionEventModel> interactions = new ArrayList<>();
+			for (InteractionEvent interactionEvent : events) {
+				Kind k = interactionEvent.getKind();
+				
+				InteractionEventModel inter = new InteractionEventModel(interactionEvent.getDelta(), 
+						interactionEvent.getDate(), interactionEvent.getEndDate(), 
+						interactionEvent.getInterestContribution(), getEventKind(k), 
+						interactionEvent.getNavigation(), interactionEvent.getOriginId(), 
+						interactionEvent.getStructureHandle(), interactionEvent.getStructureKind());
+				interactions.add(inter);
+			}
+			
+			TaskContextModel tcModel = new TaskContextModel(interactions);
+			return tcModel;
+
+		}else{
+			throw new NoTaskContextAvailableException("There was no task context found for change task "+ id);
+		}
+
+	}
+	
+	private EventKind getEventKind(Kind k){
+	
+		switch(k){
+		
+		case ATTENTION: return EventKind.ATTENTION;
+		case SELECTION: return EventKind.SELECTION;
+		case EDIT: return EventKind.EDIT;
+		case COMMAND: return EventKind.COMMAND;
+		case PREFERENCE: return EventKind.PREFERENCE;
+		case PREDICTION: return EventKind.PREDICTION;
+		case PROPAGATION: return EventKind.PROPAGATION;
+		case MANIPULATION: return EventKind.MANIPULATION;
+		default: return EventKind.UNKOWN;
+		}
+		
+
+	}
+	
+
 	public IInteractionContext getTaskContext() {
 		IInteractionContext interactionContext = null;
 		File file = new File("MylynContexts/" + id + ".zip");
@@ -481,10 +536,6 @@ public class ChangeTaskModel {
 		return containsCamelCase;
 	}
 
-
-
-
-
 	public ArrayList<String> getTags() {
 		ArrayList<String> tags = new ArrayList<>();
 		String toExtractTag = summary;
@@ -513,7 +564,6 @@ public class ChangeTaskModel {
 		}
 		return concatinatedComments;
 	}
-
 
 	public String getSummary() {
 		return summary;
@@ -614,7 +664,6 @@ public class ChangeTaskModel {
 		return methodName;
 	}
 
-
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
@@ -634,6 +683,5 @@ public class ChangeTaskModel {
 				// if deriving: appendSuper(super.hashCode()).
 				append(id).toHashCode();
 	}
-
 
 }
