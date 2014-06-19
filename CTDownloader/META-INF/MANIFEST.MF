@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CTDownloader
+Bundle-SymbolicName: CTDownloader;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: ctdownloader.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.mylyn.context.core;bundle-version="3.9.1",
+ org.eclipse.mylyn.monitor.core;bundle-version="3.9.1",
+ org.eclipse.mylyn.tasks.core;bundle-version="3.9.1",
+ org.eclipse.mylyn.bugzilla.core;bundle-version="3.9.1",
+ org.eclipse.mylyn.tasks.ui;bundle-version="3.9.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/commons-lang3-3.3.2.jar
