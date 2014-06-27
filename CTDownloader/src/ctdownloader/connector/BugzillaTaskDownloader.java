@@ -21,7 +21,7 @@ import ctdownloader.model.ChangeTaskModel;
 import ctdownloader.model.CommentModel;
 import ctdownloader.util.Punctuation;
 
-public class Bugzilla {
+public class BugzillaTaskDownloader {
 	
 	private ArrayList<ChangeTaskModel> tasks = new ArrayList<ChangeTaskModel>();
 	public static final String DATABASE_MYLYNCONTEXT = "org.eclipse.mylyn.context.tasks.db4o";

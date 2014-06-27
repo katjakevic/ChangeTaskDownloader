@@ -52,10 +52,6 @@ public class ChangeTaskModel {
 
 	}
 
-	public boolean hasContext() {
-		return hasContext;
-	}
-
 	public String getProduct() {
 		return product;
 	}
@@ -98,11 +94,22 @@ public class ChangeTaskModel {
 
 	public boolean hasTaskContext() {
 		File file = new File(contextFileName);
+		String path = file.getAbsolutePath();
 		return file.exists();
 	}
 
-	public TaskContextModel getTaskContextModel() throws NoTaskContextAvailableException {
-		if (hasContext == true) {
+	/**
+	 * Returns the {@link TaskContextModel} of the ChangeTask. Before invoking
+	 * this method, check if the ChangeTask has a TaskContext using
+	 * {@link ChangeTaskModel#hasTaskContext()}.
+	 * 
+	 * @return the TaskContextModel
+	 * @throws NoTaskContextAvailableException
+	 *             if the ChangeTask does not have a task context attached
+	 */
+	public TaskContextModel getTaskContextModel()
+			throws NoTaskContextAvailableException {
+		if (hasTaskContext()) {
 			File file = new File("MylynContexts/" + id + ".zip");
 			LocalContextStore store = new LocalContextStore(
 					new InteractionContextScaling());
@@ -111,58 +118,84 @@ public class ChangeTaskModel {
 
 			List<InteractionEvent> events = interactionContext
 					.getInteractionHistory();
-			
+
 			ArrayList<InteractionEventModel> interactions = new ArrayList<>();
 			for (InteractionEvent interactionEvent : events) {
 				Kind k = interactionEvent.getKind();
-				
-				InteractionEventModel inter = new InteractionEventModel(interactionEvent.getDelta(), 
-						interactionEvent.getDate(), interactionEvent.getEndDate(), 
-						interactionEvent.getInterestContribution(), getEventKind(k), 
-						interactionEvent.getNavigation(), interactionEvent.getOriginId(), 
-						interactionEvent.getStructureHandle(), interactionEvent.getStructureKind());
+
+				InteractionEventModel inter = new InteractionEventModel(
+						interactionEvent.getDelta(),
+						interactionEvent.getDate(),
+						interactionEvent.getEndDate(),
+						interactionEvent.getInterestContribution(),
+						getEventKind(k), interactionEvent.getNavigation(),
+						interactionEvent.getOriginId(),
+						interactionEvent.getStructureHandle(),
+						interactionEvent.getStructureKind());
 				interactions.add(inter);
 			}
-			
+
 			TaskContextModel tcModel = new TaskContextModel(interactions);
 			return tcModel;
 
+		} else {
+			throw new NoTaskContextAvailableException(
+					"There was no task context found for change task " + id);
+		}
+
+	}
+
+	private EventKind getEventKind(Kind k) {
+
+		switch (k) {
+
+		case ATTENTION:
+			return EventKind.ATTENTION;
+		case SELECTION:
+			return EventKind.SELECTION;
+		case EDIT:
+			return EventKind.EDIT;
+		case COMMAND:
+			return EventKind.COMMAND;
+		case PREFERENCE:
+			return EventKind.PREFERENCE;
+		case PREDICTION:
+			return EventKind.PREDICTION;
+		case PROPAGATION:
+			return EventKind.PROPAGATION;
+		case MANIPULATION:
+			return EventKind.MANIPULATION;
+		default:
+			return EventKind.UNKOWN;
+		}
+
+	}
+
+	/**
+	 * Returns the IInteractionContext of {@link org.eclipse.mylyn.context.core}
+	 * . Before invoking this method, check if the ChangeTask has a TaskContext
+	 * using {@link ChangeTaskModel#hasTaskContext()}.
+	 * 
+	 * @return IInteractionContext
+	 * @throws NoTaskContextAvailableException if the ChangeTask does not have a task context attached
+	 */
+	public IInteractionContext getTaskContext() throws NoTaskContextAvailableException {
+		if (hasTaskContext()) {
+			File file = new File("MylynContexts/" + id + ".zip");
+
+			LocalContextStore store = new LocalContextStore(
+					new InteractionContextScaling());
+			IInteractionContext interactionContext = store.loadContext(String.valueOf(id), file,
+					new InteractionContextScaling());
+			return interactionContext;
 		}else{
-			throw new NoTaskContextAvailableException("There was no task context found for change task "+ id);
+			throw new NoTaskContextAvailableException(
+					"There was no task context found for change task " + id);
 		}
 
 	}
-	
-	private EventKind getEventKind(Kind k){
-	
-		switch(k){
-		
-		case ATTENTION: return EventKind.ATTENTION;
-		case SELECTION: return EventKind.SELECTION;
-		case EDIT: return EventKind.EDIT;
-		case COMMAND: return EventKind.COMMAND;
-		case PREFERENCE: return EventKind.PREFERENCE;
-		case PREDICTION: return EventKind.PREDICTION;
-		case PROPAGATION: return EventKind.PROPAGATION;
-		case MANIPULATION: return EventKind.MANIPULATION;
-		default: return EventKind.UNKOWN;
-		}
-		
 
-	}
-	
-
-	public IInteractionContext getTaskContext() {
-		IInteractionContext interactionContext = null;
-		File file = new File("MylynContexts/" + id + ".zip");
-		LocalContextStore store = new LocalContextStore(
-				new InteractionContextScaling());
-		interactionContext = store.loadContext(String.valueOf(id), file,
-				new InteractionContextScaling());
-		return interactionContext;
-	}
-
-	public ArrayList<String> getMethodsFromContext() {
+	public ArrayList<String> getMethodsFromContext() throws NoTaskContextAvailableException {
 		ArrayList<String> methods = new ArrayList<>();
 		if (hasTaskContext()) {
 			IInteractionContext context = getTaskContext();
@@ -184,7 +217,7 @@ public class ChangeTaskModel {
 		return methods;
 	}
 
-	public ArrayList<String> getFilesFromContext() {
+	public ArrayList<String> getFilesFromContext() throws NoTaskContextAvailableException {
 		ArrayList<String> files = new ArrayList<>();
 		if (hasTaskContext()) {
 			IInteractionContext context = getTaskContext();
@@ -207,7 +240,7 @@ public class ChangeTaskModel {
 		return files;
 	}
 
-	public Set<Element> getAllSelectionManipulationElements() {
+	public Set<Element> getAllSelectionManipulationElements() throws NoTaskContextAvailableException {
 		Set<Element> elements = new HashSet<>();
 
 		if (hasTaskContext()) {
@@ -308,7 +341,7 @@ public class ChangeTaskModel {
 		return false;
 	}
 
-	public ArrayList<InteractionEvent> getSelectionEditManipulationSequence() {
+	public ArrayList<InteractionEvent> getSelectionEditManipulationSequence() throws NoTaskContextAvailableException {
 		ArrayList<InteractionEvent> sequence = new ArrayList<>();
 		IInteractionContext context = getTaskContext();
 		List<InteractionEvent> history = context.getInteractionHistory();
@@ -328,7 +361,7 @@ public class ChangeTaskModel {
 		return sequence;
 	}
 
-	public long getProcessTime() {
+	public long getProcessTime() throws NoTaskContextAvailableException {
 		ArrayList<InteractionEvent> sequence = getSelectionEditManipulationSequence();
 
 		if (!sequence.isEmpty()) {
@@ -343,7 +376,7 @@ public class ChangeTaskModel {
 		return 0;
 	}
 
-	public ArrayList<Element> getInteractionSequences() {
+	public ArrayList<Element> getInteractionSequences() throws NoTaskContextAvailableException {
 
 		ArrayList<Element> sequence = new ArrayList<>();
 
@@ -394,7 +427,7 @@ public class ChangeTaskModel {
 		}
 	}
 
-	public Set<Element> getAllSelectionEditManipulationElements() {
+	public Set<Element> getAllSelectionEditManipulationElements() throws NoTaskContextAvailableException {
 		Set<Element> elements = new HashSet<>();
 
 		if (hasTaskContext()) {
@@ -437,7 +470,7 @@ public class ChangeTaskModel {
 		return elements;
 	}
 
-	public Set<Element> getAllEditElements() {
+	public Set<Element> getAllEditElements() throws NoTaskContextAvailableException {
 		Set<Element> elements = new HashSet<>();
 
 		if (hasTaskContext()) {
