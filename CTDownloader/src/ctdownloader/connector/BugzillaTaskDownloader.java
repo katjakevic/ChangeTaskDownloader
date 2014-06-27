@@ -1,10 +1,15 @@
 package ctdownloader.connector;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.mylyn.internal.bugzilla.core.BugzillaRepositoryConnector;
@@ -17,6 +22,7 @@ import org.eclipse.mylyn.tasks.core.data.TaskData;
 import org.eclipse.mylyn.tasks.core.data.TaskDataCollector;
 import org.eclipse.mylyn.tasks.ui.TasksUi;
 
+import ctdownloader.exceptions.InvalidURLException;
 import ctdownloader.model.ChangeTaskModel;
 import ctdownloader.model.CommentModel;
 import ctdownloader.util.Punctuation;
@@ -24,7 +30,6 @@ import ctdownloader.util.Punctuation;
 public class BugzillaTaskDownloader {
 	
 	private ArrayList<ChangeTaskModel> tasks = new ArrayList<ChangeTaskModel>();
-	public static final String DATABASE_MYLYNCONTEXT = "org.eclipse.mylyn.context.tasks.db4o";
 
 	/**
 	 * Queries the bug tracker Bugzilla with the queryString.
@@ -34,9 +39,10 @@ public class BugzillaTaskDownloader {
 	 * advanced&v1=mylyn%2Fcontext%2Fzip&product=Mylyn%20Context"
 	 * 
 	 * @return ArrayList<ChangeTaskModel>, the queried change tasks.
+	 * @throws InvalidURLException 
 	 */
 	@SuppressWarnings("restriction")
-	public ArrayList<ChangeTaskModel> queryTasks(String queryString) {
+	public ArrayList<ChangeTaskModel> queryTasks(String queryString) throws InvalidURLException {
 
 		final BugzillaRepositoryConnector connector = new BugzillaRepositoryConnector();
 
@@ -46,7 +52,36 @@ public class BugzillaTaskDownloader {
 		IRepositoryModel repositoryModel = TasksUi.getRepositoryModel();
 		final IRepositoryQuery repositoryQuery = repositoryModel
 				.createRepositoryQuery(repositories.get(1));
-		repositoryQuery.setUrl(repositories.get(1).getUrl() + queryString);
+		
+		
+		//check if the provided url is valid
+		String[] schemes = {"http","https"};
+		UrlValidator urlValidator = new UrlValidator(schemes);
+		
+		boolean isValid =urlValidator.isValid(queryString);
+		if(isValid == false){
+			throw new InvalidURLException();
+		}
+		
+		try {
+			URL obj = new URL(queryString);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+			int response = con.getResponseCode();
+			if(response != HttpURLConnection.HTTP_OK){
+				throw new InvalidURLException("Provide a valid URL.");
+			}
+		} catch (MalformedURLException e1) {
+			throw new InvalidURLException(e1.getMessage());
+		} catch (IOException e) {
+			throw new InvalidURLException(e.getMessage());
+		}
+		
+		
+		
+		
+		
+		//repositoryQuery.setUrl(repositories.get(1).getUrl() + queryString);
+		repositoryQuery.setUrl(queryString);
 		final TaskDataCollector collector = new TaskDataCollector() {
 			@Override
 			public void accept(final TaskData taskData) {

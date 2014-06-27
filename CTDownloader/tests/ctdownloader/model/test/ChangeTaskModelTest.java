@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ctdownloader.connector.BugzillaTaskDownloader;
+import ctdownloader.exceptions.InvalidURLException;
 import ctdownloader.model.ChangeTaskModel;
 import ctdownloader.model.CommentModel;
 import ctdownloader.model.NoTaskContextAvailableException;
@@ -55,7 +56,7 @@ public class ChangeTaskModelTest extends TestCase {
 	}
 
 	@Test
-	public void testGetTaskContextModelWithTaskContext(){
+	public void testGetTaskContextModelWithTaskContext() throws InvalidURLException{
 		BugzillaTaskDownloader downloader = new BugzillaTaskDownloader();
 		ArrayList<ChangeTaskModel> tasks = downloader.queryTasks("https://bugs.eclipse.org/bugs/buglist.cgi?bug_id=359547&bug_id_type=anyexact&query_format=advanced");
 		
