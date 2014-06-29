@@ -22,7 +22,7 @@ public class BugzillaTaskDownloaderTest extends TestCase {
 	
 	@Test
 	public void testQueryTasksWithValidURL() throws InvalidURLException{
-		ArrayList<ChangeTaskModel> tasks =  downloader.queryTasks("https://bugs.eclipse.org/bugs/buglist.cgi?classification=Mylyn&f1=attachments.description&o1=substring&product=Mylyn%20Context&query_format=advanced&v1=mylyn%2Fcontext%2Fzip");
+		ArrayList<ChangeTaskModel> tasks =  downloader.queryTasks("https://bugs.eclipse.org/bugs/buglist.cgi?f1=bug_id&o1=equals&query_format=advanced&v1=334024");
 
 		System.out.println(tasks.size());
 	}

@@ -28,7 +28,7 @@ public class ChangeTaskModelTest extends TestCase {
 		changeTask = new ChangeTaskModel(
 				"SuchMethodError thrown when de/activating a task",
 				"I tried toggling the activation of a task and got some errors in my log.",
-				comments, 350482, "MylynContexts/350482.zip", "Mylyn Context",
+				comments, 350482, null, "Mylyn Context",
 				"P1", "major", false);
 	}
 
@@ -37,7 +37,7 @@ public class ChangeTaskModelTest extends TestCase {
 		assertFalse(changeTask.hasTaskContext());
 		Throwable ex = null;
 		try {
-			changeTask.getTaskContextModel();
+			changeTask.getAllTaskContextModels();
 		} catch (NoTaskContextAvailableException e) {
 			ex = e;
 		}
@@ -45,7 +45,7 @@ public class ChangeTaskModelTest extends TestCase {
 		
 		Throwable ex1 = null;
 		try {
-			changeTask.getTaskContext();
+			changeTask.getTaskContexts();
 		} catch (NoTaskContextAvailableException e) {
 			ex1 = e;
 		}

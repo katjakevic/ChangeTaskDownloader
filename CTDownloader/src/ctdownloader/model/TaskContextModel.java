@@ -9,13 +9,14 @@ import org.eclipse.mylyn.context.core.IInteractionContext;
 import org.eclipse.mylyn.context.core.IInteractionElement;
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
 
-import ctdownloader.model.ChangeTaskModel.CustomComparator;
 import ctdownloader.model.InteractionEventModel.EventKind;
 import ctdownloader.model.codeelements.MethodModel;
 
 public class TaskContextModel {
 
 	private ArrayList<InteractionEventModel> interactions = new ArrayList<>();
+	
+	private String submitter;
 
 	public TaskContextModel(ArrayList<InteractionEventModel> events) {
 		interactions.addAll(events);
@@ -40,8 +41,16 @@ public class TaskContextModel {
 
 		return methods;
 	}
-
 	
+
+	public String getSubmitter() {
+		return submitter;
+	}
+
+	public void setSubmitter(String submitter) {
+		this.submitter = submitter;
+	}
+
 	public ArrayList<InteractionEventModel> getSortedInteractions( ArrayList<InteractionEventModel> events) throws NoTaskContextAvailableException {
 		Collections.sort(events, new DateComparator());
 		return events;

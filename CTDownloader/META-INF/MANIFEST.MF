@@ -16,6 +16,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/commons-lang3-3.3.2.jar,
- lib/commons-validator-1.4.0.jar
+ lib/commons-validator-1.4.0.jar,
+ lib/json-simple-1.1.1.jar
 Export-Package: ctdownloader.connector,
+ ctdownloader.exceptions,
  ctdownloader.model
