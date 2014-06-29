@@ -37,6 +37,7 @@ import ctdownloader.model.InteractionEventModel;
 import ctdownloader.model.NoTaskContextAvailableException;
 import ctdownloader.model.TaskContextModel;
 import ctdownloader.model.InteractionEventModel.EventKind;
+import ctdownloader.util.DateParser;
 import ctdownloader.util.FileFilterUtil;
 import ctdownloader.util.JsonWriter;
 import ctdownloader.util.Punctuation;
@@ -145,10 +146,7 @@ public class BugzillaTaskDownloader {
 
 		String changed = attribute.getMappedAttribute(
 				TaskAttribute.DATE_MODIFICATION).getValue();
-		
-//		Punctuation punct = new Punctuation();
-//		changed = punct.removeAllPunctuationButNumbers(changed);
-//		changed = changed.trim();
+		Date changeDated = DateParser.getDateFromString2(changed);
 
 		String severity = attribute.getMappedAttribute(TaskAttribute.SEVERITY)
 				.getValue();
@@ -160,7 +158,7 @@ public class BugzillaTaskDownloader {
 		ChangeTaskModel taskModel = new ChangeTaskModel(summary, desc,
 				getComments(attribute), id, contextMap, product, severity,
 				priority, hasContext);
-		taskModel.setChanged(changed);
+		taskModel.setChanged(changeDated);
 		
 		//write the task to a json file
 		jsonWriter.writeChangeTaskModelToJsonFile(taskModel);

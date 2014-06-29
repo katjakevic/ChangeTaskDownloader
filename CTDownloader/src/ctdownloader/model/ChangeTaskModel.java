@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +39,7 @@ public class ChangeTaskModel {
 	private String severity;
 	private String priority;
 
-	private String changed;
+	private Date changed;
 	private boolean hasContext;
 	
 	private String folderPath;
@@ -106,11 +107,11 @@ public class ChangeTaskModel {
 		this.priority = priority;
 	}
 
-	public String getChanged() {
+	public Date getChanged() {
 		return changed;
 	}
 
-	public void setChanged(String changed) {
+	public void setChanged(Date changed) {
 		this.changed = changed;
 	}
 

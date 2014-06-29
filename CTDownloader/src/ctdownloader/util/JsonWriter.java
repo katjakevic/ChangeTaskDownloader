@@ -67,7 +67,7 @@ public class JsonWriter {
 		jsonTaskObject.put("product", task.getProduct());
 		jsonTaskObject.put("severity", task.getSeverity());
 		jsonTaskObject.put("priority", task.getPriority());
-		jsonTaskObject.put("changed", task.getChanged());
+		jsonTaskObject.put("changed", task.getChanged().toString());
 		jsonTaskObject.put("hasContext", task.hasTaskContext());
 		jsonTaskObject.put("folderPath", task.getFolderPath());
 		

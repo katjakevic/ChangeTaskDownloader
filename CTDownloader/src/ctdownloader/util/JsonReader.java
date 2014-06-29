@@ -111,7 +111,8 @@ public class JsonReader {
 					ChangeTaskModel changeTask = new ChangeTaskModel(summary,
 							description, commentModels, id, contextMap,
 							product, severity, priority, hasContext);
-					changeTask.setChanged(changed);
+					
+					changeTask.setChanged(DateParser.getDateFromString(changed));
 
 					changeTasks.add(changeTask);
 
@@ -170,10 +171,10 @@ public class JsonReader {
 					
 					String sDate = (String) jsonInteractionObject
 							.get("startDate");
-					Date startDate = getDateFromString(sDate);
+					Date startDate = DateParser.getDateFromString(sDate);
 					
 					String eDate = (String) jsonInteractionObject.get("endDate");
-					Date endDate = getDateFromString(eDate);
+					Date endDate = DateParser.getDateFromString(eDate);
 					double interestDouble = (double) jsonInteractionObject
 							.get("interest");
 					float interest = (float) interestDouble;
@@ -217,23 +218,6 @@ public class JsonReader {
 		}
 
 		return contexts;
-	}
-	
-	
-	private Date getDateFromString(String dateInString){
-		//Tue Oct 30 00:17:05 CET 2012
-		dateInString = dateInString.replace("CET", "");
-		SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy", Locale.US);
-		try {
-			Date date = formatter.parse(dateInString);
-			System.out.println(date);
-			return date;
-			
-		} catch (java.text.ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 }
