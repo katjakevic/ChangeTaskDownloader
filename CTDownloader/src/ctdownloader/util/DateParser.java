@@ -8,7 +8,12 @@ public class DateParser {
 	
 	public static Date getDateFromString(String dateInString){
 		//Tue Oct 30 00:17:05 CET 2012
-		dateInString = dateInString.replace("CET", "");
+		if(dateInString.contains("CET")){
+			dateInString = dateInString.replace("CET", "");
+		}else if (dateInString.contains("CEST")){
+			dateInString = dateInString.replace("CEST", "");
+		}
+		
 		SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy", Locale.US);
 		try {
 			Date date = formatter.parse(dateInString);

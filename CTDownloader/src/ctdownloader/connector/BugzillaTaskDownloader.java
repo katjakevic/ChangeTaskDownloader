@@ -71,7 +71,7 @@ public class BugzillaTaskDownloader {
 				.getAllRepositories();
 		IRepositoryModel repositoryModel = TasksUi.getRepositoryModel();
 		final IRepositoryQuery repositoryQuery = repositoryModel
-				.createRepositoryQuery(repositories.get(1));
+				.createRepositoryQuery(repositories.get(0));
 
 		// check if the provided url is valid
 		String[] schemes = { "http", "https" };
@@ -101,7 +101,7 @@ public class BugzillaTaskDownloader {
 			public void accept(final TaskData taskData) {
 				try {
 					TaskData completeTaskData = connector.getTaskData(
-							repositories.get(1), taskData.getTaskId(),
+							repositories.get(0), taskData.getTaskId(),
 							new NullProgressMonitor());
 					System.out.println(completeTaskData.getTaskId());
 
@@ -117,7 +117,8 @@ public class BugzillaTaskDownloader {
 
 			}
 		};
-		connector.performQuery(repositories.get(1), repositoryQuery, collector,
+		TaskRepository repo = repositories.get(0);
+		connector.performQuery(repo, repositoryQuery, collector,
 				null, new NullProgressMonitor());
 
 		System.out.println("tasks downloaded: " + tasks.size());
@@ -178,6 +179,8 @@ public class BugzillaTaskDownloader {
 				ArrayList<InteractionEventModel> interactions = new ArrayList<>();
 				for (InteractionEvent interactionEvent : events) {
 					Kind k = interactionEvent.getKind();
+					
+					
 
 					InteractionEventModel inter = new InteractionEventModel(
 							interactionEvent.getDelta(),

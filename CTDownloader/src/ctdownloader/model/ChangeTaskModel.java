@@ -82,6 +82,10 @@ public class ChangeTaskModel {
 	public String getFolderPath(){
 		return folderPath;
 	}
+	
+	public void setFolderPath(String p){
+		folderPath = p+"\\"+id;
+	}
 
 	public String getProduct() {
 		return product;
@@ -211,6 +215,25 @@ public class ChangeTaskModel {
 			throw new NoTaskContextAvailableException(
 					"There was no task context found for change task " + id);
 		}
+
+	}
+	
+	
+	public IInteractionContext getOneSpecificTaskContext(String path){
+
+		LocalContextStore store = new LocalContextStore(
+				new InteractionContextScaling());
+
+			File file = new File(path);
+			
+				IInteractionContext interactionContext = store.loadContext(
+						String.valueOf(id), file,
+						new InteractionContextScaling());
+
+			
+
+			return interactionContext;
+		
 
 	}
 	

@@ -51,7 +51,7 @@ public class TaskContextModel {
 		this.submitter = submitter;
 	}
 
-	public ArrayList<InteractionEventModel> getSortedInteractions( ArrayList<InteractionEventModel> events) throws NoTaskContextAvailableException {
+	public ArrayList<InteractionEventModel> getSortedInteractions( ArrayList<InteractionEventModel> events) {
 		Collections.sort(events, new DateComparator());
 		return events;
 	}
